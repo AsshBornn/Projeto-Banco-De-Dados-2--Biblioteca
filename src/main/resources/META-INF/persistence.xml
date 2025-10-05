@@ -5,11 +5,11 @@
                                  https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
              version="3.1">
     <persistence-unit name="bibliotecaPU">
-        <class>com.exemplo.biblioteca.entity.Categoria</class>
-        <class>com.exemplo.biblioteca.entity.Livro</class>
-        <class>com.exemplo.biblioteca.entity.Usuario</class>
-        <class>com.exemplo.biblioteca.entity.Locacao</class>
-        <class>com.exemplo.biblioteca.entity.Pagamento</class>
+        <class>org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Categoria</class>
+        <class>org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Livro</class>
+        <class>org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Usuario</class>
+        <class>org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Locacao</class>
+        <class>org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Pagamento</class>
         <properties>
             <!-- Conexão com PostgreSQL -->
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/biblioteca"/>

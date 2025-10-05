@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 @Entity
+@Table(name="tb_categoria")
 public class Categoria implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -15,7 +16,7 @@ public class Categoria implements Serializable {
     @Id
     private Integer id;
     private String descricao;
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Livro> livros = new HashSet<>();
 
     public Categoria() {}

@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(name="tb_livro")
 public class Livro implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,13 +18,15 @@ public class Livro implements Serializable {
     private Integer id;
     private String titulo;
     private Double preco;
+    @Enumerated(EnumType.STRING)
     private LivroStatus status;
+
 
     @ManyToOne
     @JoinColumn(name="categoria_id")
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "locacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "livros")
     private Set<Locacao> locacoes = new HashSet<>();
 
     public Livro() {}
