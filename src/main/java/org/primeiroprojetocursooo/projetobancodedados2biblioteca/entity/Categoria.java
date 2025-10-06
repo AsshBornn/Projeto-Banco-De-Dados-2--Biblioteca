@@ -15,15 +15,16 @@ public class Categoria implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
+    @Column(unique = true)
     private String descricao;
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Livro> livros = new HashSet<>();
 
     public Categoria() {}
 
-    public Categoria(String descricao, Integer id) {
-        this.descricao = descricao;
+    public Categoria(Integer id,String descricao) {
         this.id = id;
+        this.descricao = descricao;
     }
 
     public Integer getId() {

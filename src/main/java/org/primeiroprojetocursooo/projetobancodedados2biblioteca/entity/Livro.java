@@ -16,6 +16,7 @@ public class Livro implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
     private Integer id;
+    @Column(unique = true)
     private String titulo;
     private Double preco;
     @Enumerated(EnumType.STRING)
@@ -67,6 +68,14 @@ public class Livro implements Serializable {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public LivroStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LivroStatus status) {
+        this.status = status;
     }
 
     public Set<Locacao> getLocacoes() {
