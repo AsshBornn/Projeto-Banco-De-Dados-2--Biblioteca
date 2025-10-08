@@ -2,6 +2,7 @@ package org.primeiroprojetocursooo.projetobancodedados2biblioteca;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO.UsuarioDAO;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.*;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.util.JPAUtil;
 import org.springframework.boot.SpringApplication;
@@ -28,26 +29,9 @@ public class ProjetoBancoDeDados2BibliotecaApplication {
         Pagamento pagamento = new Pagamento(null, LocalDate.of(2025,10,5),locacao);
 
         System.out.println("Valor total da locação: R$" + locacao.getValorTotal());
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        usuarioDAO.salvar(usuario);
 
-        // 2️⃣ Pegando EntityManager do JPAUtil
-        EntityManager em = JPAUtil.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
 
-        try {
-            tx.begin();          // inicia transação
-            em.persist(categoria);
-            em.persist(livro);      // persiste livro 1
-            em.persist(usuario);      // persiste livro 2
-            em.persist(locacao);
-            em.persist(pagamento);// persiste locação
-
-            tx.commit();         // confirma alterações no banco
-        } catch (Exception e) {
-            tx.rollback();       // desfaz alterações se der erro
-            e.printStackTrace();
-        } finally {
-            em.close();          // fecha EntityManager
-            JPAUtil.close();     // fecha EntityManagerFactory
-        }
     }
 }
