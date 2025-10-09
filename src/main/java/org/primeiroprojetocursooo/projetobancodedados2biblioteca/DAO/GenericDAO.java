@@ -54,9 +54,8 @@ public class GenericDAO <T>{
                 entityName = clazz.getSimpleName();
             }
             // Monta a consulta JPQL dinamicamente
-            String jpql  = "FROM "+ entityName;
-            //retorna o resultado a lista
-            return em.createQuery(jpql).getResultList();
+            return em.createQuery("FROM " + entityName, clazz)
+                    .getResultList();
         }finally{
             em.close();
         }
@@ -76,6 +75,8 @@ public class GenericDAO <T>{
             if(et!=null&& et.isActive()){
                 et.rollback();
             }
+            e.printStackTrace(); // ou lançar RuntimeException
+            throw new RuntimeException("Erro ao atualizar/excluir", e);
         }finally {
             em.close();
         }
@@ -90,12 +91,18 @@ public class GenericDAO <T>{
             et.begin();
 
             T entidade = em.find(clazz, id);
-            em.remove(entidade);
+            if (entidade != null) {
+                em.remove(entidade);
+                System.out.println("Entidade removida com sucesso: " + entidade);
+            } else {
+                System.out.println("Entidade com id " + id + " não encontrada.");
+            }
             et.commit();
         }catch (Exception e){
             if(et !=null &&et.isActive()){
                 et.rollback();
             }e.printStackTrace();
+            throw new RuntimeException("Erro ao atualizar/excluir", e);
     }finally {
             em.close();
         }

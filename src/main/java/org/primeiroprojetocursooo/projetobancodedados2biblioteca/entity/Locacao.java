@@ -5,7 +5,6 @@ import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.Lo
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -23,7 +22,6 @@ public class Locacao implements Serializable {
     @Enumerated(EnumType.STRING)
     private LocacaoStatus status;
 
-
     @ManyToOne
     @JoinColumn(name="cliente_id")
     private Usuario usuario;
@@ -36,10 +34,12 @@ public class Locacao implements Serializable {
     )
     private Set<Livro> livros = new HashSet<>();
 
+    @OneToOne(mappedBy = "locacao", cascade = CascadeType.ALL)
+    private Pagamento pagamento;
 
     public Locacao() {}
 
-    public Locacao(Integer id, LocalDate dataLocacao, LocalDate dataDevolucao) {
+    public Locacao(Integer id, LocalDate dataLocacao, LocalDate dataDevolucao, LocacaoStatus status) {
         this.id = id;
         this.dataLocacao = dataLocacao;
         this.dataDevolucao = dataDevolucao;
@@ -90,19 +90,24 @@ public class Locacao implements Serializable {
         return livros;
     }
 
-    public Double getValorTotal() {
-        if (livros.isEmpty()) return 0.0;
-
-        long dias = java.time.temporal.ChronoUnit.DAYS.between(dataLocacao, dataDevolucao);
-        if (dias <= 0) dias = 1; // mínimo de 1 dia
-
-        double valorTotal = 0.0;
-        for (Livro livro : livros) {
-            valorTotal += livro.getPreco() * dias;
-        }
-        return valorTotal;
+    public Pagamento getPagamento() {
+        return pagamento;
     }
 
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento;
+    }
+
+    public Double getValorTotal() {
+        if (livros.isEmpty() || dataLocacao == null) return 0.0;
+
+        LocalDate dataFinal = (dataDevolucao != null) ? dataDevolucao : LocalDate.now();
+         double dias =Math.max(1,java.time.temporal.ChronoUnit.DAYS.between(dataLocacao, dataFinal)) ;
+
+        return livros.stream()
+                .mapToDouble(l -> l.getPreco() * dias)
+                .sum();
+    }
 
     @Override
     public boolean equals(Object o) {

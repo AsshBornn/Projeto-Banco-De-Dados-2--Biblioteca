@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO.UsuarioDAO;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.*;
+import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.LocacaoStatus;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.util.JPAUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,13 +25,15 @@ public class ProjetoBancoDeDados2BibliotecaApplication {
         Categoria categoria = new Categoria(null,"javeiro");
         livro.setCategoria(categoria);
         livro.setStatus(DISPONIVEL);
-        Locacao locacao = new Locacao(null, LocalDate.of(2025, 10, 1), LocalDate.of(2025, 10, 5));
+        Locacao locacao = new Locacao(null, LocalDate.of(2025, 10, 1), LocalDate.of(2025, 10, 5), LocacaoStatus.LOCADA);
         locacao.getLivros().add(livro);
         Pagamento pagamento = new Pagamento(null, LocalDate.of(2025,10,5),locacao);
 
         System.out.println("Valor total da locação: R$" + locacao.getValorTotal());
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        usuarioDAO.salvar(usuario);
+        UsuarioDAO usuarioDAO = new UsuarioDAO(Usuario.class);
+        usuarioDAO.listar();
+
+
 
 
     }
