@@ -2,6 +2,7 @@ package org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO;
 
 import jakarta.persistence.EntityManager;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Categoria;
+import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Usuario;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.util.JPAUtil;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CategoriaDAO extends GenericDAO<Categoria> {
     }
     //READ
     @Override
-    public Categoria buscarPorId(Long id) {
+    public Categoria buscarPorId(Integer id) {
         return super.buscarPorId(id);
     }
     //UPDATE
@@ -35,7 +36,7 @@ public class CategoriaDAO extends GenericDAO<Categoria> {
     //DELETE
 
     @Override
-    public void excluir(Long id) {
+    public void excluir(Integer id) {
         super.excluir(id);
     }
     //METODO EXPECIFICO PARA BUSCAR POR DESCRIÇÃO
@@ -69,6 +70,23 @@ public class CategoriaDAO extends GenericDAO<Categoria> {
             em.close();
         }
     }
+    public Categoria buscarPorDescricaoExata(String descricao) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try{
+            String jpql= "SELECT c FROM Categoria c WHERE LOWER(c.descricao) = LOWER(:descricao)";
+            return em.createQuery(jpql, Categoria.class)
+                    .setParameter("descricao",descricao)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        }finally {
+            em.close();
+        }
+    }
+
+
+
+
 
 
 }

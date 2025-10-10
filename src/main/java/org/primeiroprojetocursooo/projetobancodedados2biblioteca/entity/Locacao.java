@@ -23,10 +23,10 @@ public class Locacao implements Serializable {
     private LocacaoStatus status;
 
     @ManyToOne
-    @JoinColumn(name="cliente_id")
+    @JoinColumn(name="usuario_id")
     private Usuario usuario;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "tb_locacao_livro",
             joinColumns = @JoinColumn(name = "locacao_id"),

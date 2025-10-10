@@ -21,7 +21,7 @@ public class GenericDAO <T>{
         EntityManager em= JPAUtil.getEntityManager();//Inicia o EntityManager
         try{//Uso do EntityManager deve ser feito em tranzaçõpes
             em.getTransaction().begin();//inicia a tranzação
-            em.persist(entidade);//manda persistir no banco de dados
+            em.merge(entidade);//manda persistir no banco de dados
             em.getTransaction().commit();//confirma se deu certo
         }catch(Exception e){//capturar exceção se der errado
             em.getTransaction().rollback();//desfazer a transação
@@ -31,7 +31,7 @@ public class GenericDAO <T>{
     }
     //READ por ID
 
-    public T buscarPorId(Long id) {
+    public T buscarPorId(Integer id) {
         EntityManager em= JPAUtil.getEntityManager();// inicia o EM
         try{
             return em.find(clazz, id);
@@ -82,7 +82,7 @@ public class GenericDAO <T>{
         }
     }
     //DELETE
-    public void excluir(Long id) {
+    public void excluir(Integer id) {
         EntityManager em= JPAUtil.getEntityManager();
         EntityTransaction et = null;
 

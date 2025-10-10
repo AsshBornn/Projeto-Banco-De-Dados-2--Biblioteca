@@ -27,7 +27,7 @@ public class Livro implements Serializable {
     @JoinColumn(name="categoria_id")
     private Categoria categoria;
 
-    @ManyToMany(mappedBy = "livros")
+    @ManyToMany(mappedBy = "livros", fetch = FetchType.EAGER)
     private Set<Locacao> locacoes = new HashSet<>();
 
     public Livro() {}
@@ -93,4 +93,9 @@ public class Livro implements Serializable {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+    @Override
+    public String toString() {
+        return titulo + " (ID: " + id + ")";
+    }
+
 }

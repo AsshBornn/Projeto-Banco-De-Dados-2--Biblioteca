@@ -29,8 +29,7 @@ public class Usuario implements Serializable {
         this.senha = senha;
         this.telefone = telefone;
     }
-
-    @OneToMany(mappedBy="usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Locacao> locacoes = new HashSet<>();
 
     public Integer getId() {

@@ -13,8 +13,8 @@ public class GenericService<T> {
 
     public void salvar(T entidade) { dao.salvar(entidade); }
     public void atualizar(T entidade) { dao.atualizar(entidade); }
-    public void excluir(Long id) { dao.excluir(id); }
-    public T buscarPorId(Long id) { return dao.buscarPorId(id); }
+    public void excluir(Integer id) { dao.excluir(id); }
+    public T buscarPorId(Integer id) { return dao.buscarPorId(id); }
     public List<T> listar() { return dao.listar(); }
 
     public GenericDAO<T> getDao() {

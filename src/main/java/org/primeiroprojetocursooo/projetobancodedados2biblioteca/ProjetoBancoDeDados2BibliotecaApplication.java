@@ -19,7 +19,7 @@ public class ProjetoBancoDeDados2BibliotecaApplication {
 
     public static void main(String[] args) {
 
-        // 1️⃣ Criando locação e livros
+        /*1️⃣ Criando locação e livros
         Usuario usuario = new Usuario(null,"Erick","erickgeovane2002@gmail.com","123456789","83999938317");
         Livro livro = new Livro(null, "Java Básico", 5.0);
         Categoria categoria = new Categoria(null,"javeiro");
@@ -32,7 +32,7 @@ public class ProjetoBancoDeDados2BibliotecaApplication {
         System.out.println("Valor total da locação: R$" + locacao.getValorTotal());
         UsuarioDAO usuarioDAO = new UsuarioDAO(Usuario.class);
         usuarioDAO.listar();
-
+        */
 
 
 

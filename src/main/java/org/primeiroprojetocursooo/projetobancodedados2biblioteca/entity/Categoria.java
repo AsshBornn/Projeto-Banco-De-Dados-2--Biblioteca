@@ -17,7 +17,7 @@ public class Categoria implements Serializable {
     private Integer id;
     @Column(unique = true)
     private String descricao;
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Livro> livros = new HashSet<>();
 
     public Categoria() {}
