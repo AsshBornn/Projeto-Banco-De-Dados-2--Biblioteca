@@ -21,7 +21,7 @@ public class GenericDAO <T>{
         EntityManager em= JPAUtil.getEntityManager();//Inicia o EntityManager
         try{//Uso do EntityManager deve ser feito em tranzaçõpes
             em.getTransaction().begin();//inicia a tranzação
-            em.merge(entidade);//manda persistir no banco de dados
+            em.persist(entidade);//manda persistir no banco de dados
             em.getTransaction().commit();//confirma se deu certo
         }catch(Exception e){//capturar exceção se der errado
             em.getTransaction().rollback();//desfazer a transação

@@ -265,6 +265,7 @@ public class Main {
 
         Locacao loc = new Locacao();
         loc.setUsuario(u);
+        loc.setStatus(LocacaoStatus.LOCADA);
 
         for (String s : ids) {
             int livroId = Integer.parseInt(s.trim());
@@ -341,7 +342,7 @@ public class Main {
 
     private static void cadastrarPagamento() {
         // Listar locações pendentes
-        List<Locacao> pendentes = locacaoService.listarLocacoesSemPagamento();
+        List<Locacao> pendentes = locacaoService.listar();
         System.out.println("Locações pendentes de pagamento:");
         pendentes.forEach(l ->
                 System.out.println(l.getId() + " - " + l.getUsuario().getNome() + " - Livros: " + l.getLivros())
@@ -360,7 +361,9 @@ public class Main {
         // Criar e salvar pagamento
         Pagamento p = new Pagamento();
         p.setLocacao(loc);
+        p.setDataPagamento(LocalDate.now());
         pagamentoService.salvar(p);
+        loc.setStatus(LocacaoStatus.FINALIZADA);
 
         // Mostrar valor imediatamente
         System.out.println("Pagamento registrado!");
@@ -388,8 +391,8 @@ public class Main {
             System.out.println("Formato de data inválido");
             return;
         }
-
-        pagamentoService.atualizarDataPagamento(p, novaData);
+        p.setDataPagamento(novaData);
+        pagamentoService.atualizar(p);
         System.out.println("Data do pagamento atualizada com sucesso!");
     }
 }
