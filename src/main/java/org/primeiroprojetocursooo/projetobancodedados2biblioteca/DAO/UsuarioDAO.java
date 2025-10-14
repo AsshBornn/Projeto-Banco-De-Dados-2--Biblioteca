@@ -39,4 +39,13 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
     public void excluir(Integer id) {
         super.excluir(id);
     }
+
+    public  List <Usuario> buscarPorNome(String nome) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+        return List.of();
+        } finally {
+            em.close();
+        }
+    }
 }

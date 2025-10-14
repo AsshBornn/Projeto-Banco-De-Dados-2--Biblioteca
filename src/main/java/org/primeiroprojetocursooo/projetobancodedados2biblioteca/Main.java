@@ -19,14 +19,17 @@ public class Main {
 
     public static void main(String[] args) {
         while(true) {
-            System.out.println("\n==== MENU PRINCIPAL ====");
-            System.out.println("1 - Categoria");
-            System.out.println("2 - Livro");
-            System.out.println("3 - Usuário");
-            System.out.println("4 - Locação");
-            System.out.println("5 - Pagamento");
-            System.out.println("0 - Sair");
-            System.out.print("Escolha: ");
+            StringBuilder menu = new StringBuilder();
+            menu.append("\n==== MENU PRINCIPAL ====\n")
+                    .append("1 - Categoria\n")
+                    .append("2 - Livro\n")
+                    .append("3 - Usuário\n")
+                    .append("4 - Locação\n")
+                    .append("5 - Pagamento\n")
+                    .append("0 - Sair\n")
+                    .append("Escolha: ")
+                    .toString();
+
             int opc = Integer.parseInt(sc.nextLine());
 
             switch(opc) {
@@ -43,12 +46,15 @@ public class Main {
 
     // ================= MENU CATEGORIA =================
     private static void menuCategoria() {
-        System.out.println("\n==== MENU CATEGORIA ====");
-        System.out.println("1 - Listar");
-        System.out.println("2 - Cadastrar");
-        System.out.println("3 - Atualizar");
-        System.out.println("4 - Excluir");
-        System.out.print("Escolha: ");
+        StringBuilder menuCategoria = new StringBuilder();
+        menuCategoria.append("\n==== MENU CATEGORIA ====\n")
+                .append("1 - Listar\n")
+                .append("2 - Cadastrar\n")
+                .append("3 - Atualizar\n")
+                .append("4 - Excluir\n")
+                .append("Escolha: ")
+                .toString();
+
         int opc = Integer.parseInt(sc.nextLine());
 
         switch(opc) {
@@ -97,12 +103,14 @@ public class Main {
 
     // ================= MENU LIVRO =================
     private static void menuLivro() {
-        System.out.println("\n==== MENU LIVRO ====");
-        System.out.println("1 - Listar");
-        System.out.println("2 - Cadastrar");
-        System.out.println("3 - Atualizar");
-        System.out.println("4 - Excluir");
-        System.out.print("Escolha: ");
+        System.out.print(new StringBuilder()
+                .append("\n==== MENU LIVRO ====\n")
+                .append("1 - Listar\n")
+                .append("2 - Cadastrar\n")
+                .append("3 - Atualizar\n")
+                .append("4 - Excluir\n")
+                .append("Escolha: ")
+                .toString());
         int opc = Integer.parseInt(sc.nextLine());
 
         switch(opc) {
@@ -164,12 +172,14 @@ public class Main {
 
     // ================= MENU USUÁRIO =================
     private static void menuUsuario() {
-        System.out.println("\n==== MENU USUÁRIO ====");
-        System.out.println("1 - Listar");
-        System.out.println("2 - Cadastrar");
-        System.out.println("3 - Atualizar");
-        System.out.println("4 - Excluir");
-        System.out.print("Escolha: ");
+        System.out.print(new StringBuilder()
+                .append("\n==== MENU USUÁRIO ====\n")
+                .append("1 - Listar\n")
+                .append("2 - Cadastrar\n")
+                .append("3 - Atualizar\n")
+                .append("4 - Excluir\n")
+                .append("Escolha: ")
+                .toString());
         int opc = Integer.parseInt(sc.nextLine());
 
         switch(opc) {
@@ -223,12 +233,14 @@ public class Main {
 
     // ================= MENU LOCAÇÃO =================
     private static void menuLocacao() {
-        System.out.println("\n==== MENU LOCAÇÃO ====");
-        System.out.println("1 - Listar");
-        System.out.println("2 - Cadastrar");
-        System.out.println("3 - Atualizar (finalizar)");
-        System.out.println("4 - Excluir");
-        System.out.print("Escolha: ");
+        System.out.print(new StringBuilder()
+                .append("\n==== MENU LOCAÇÃO ====\n")
+                .append("1 - Listar\n")
+                .append("2 - Cadastrar\n")
+                .append("3 - Atualizar (finalizar)\n")
+                .append("4 - Excluir\n")
+                .append("Escolha: ")
+                .toString());
         int opc = Integer.parseInt(sc.nextLine());
 
         switch(opc) {
@@ -316,11 +328,13 @@ public class Main {
 
     // ================= MENU PAGAMENTO =================
     private static void menuPagamento() {
-        System.out.println("\n==== MENU PAGAMENTO ====");
-        System.out.println("1 - Listar");
-        System.out.println("2 - Cadastrar");
-        System.out.println("3 - Atualizar");
-        System.out.print("Escolha: ");
+        System.out.print(new StringBuilder()
+                .append("\n==== MENU PAGAMENTO ====\n")
+                .append("1 - Listar\n")
+                .append("2 - Cadastrar\n")
+                .append("3 - Atualizar\n")
+                .append("Escolha: ")
+                .toString());
         int opc = Integer.parseInt(sc.nextLine());
 
         switch(opc) {

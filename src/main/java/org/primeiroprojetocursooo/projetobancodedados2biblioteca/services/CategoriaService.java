@@ -4,33 +4,36 @@ import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Categori
 
 import java.util.List;
 
-public class CategoriaService extends GenericService<Categoria> {
+public class CategoriaService extends GenericService<Categoria,CategoriaDAO> {
 
-    private CategoriaDAO categoriaDAO; // DAO específico
     public CategoriaService() {
         super(new CategoriaDAO(Categoria.class)); // passa para GenericService
-        this.categoriaDAO = (CategoriaDAO) super.getDao(); // pega a mesma instância para não criar duas instancias do DAO
     }
-
     @Override
     public void salvar(Categoria entidade) {
-        super.salvar(entidade);
+        if(isValid(entidade)){
+        salvar(entidade);}
     }
     @Override
     public void atualizar(Categoria entidade) {
-        super.atualizar(entidade);
+       if(isValid(entidade)){
+           atualizar(entidade);
+       }
     }
-    @Override
-    public void excluir(Integer id) {
-        super.excluir(id);
+    //METODO BUSCAR POR DESCRIÇÂO
+    public List<Categoria> buscarPorDescricao(String descricao) {
+        return getDao().buscarPorDescricao(descricao);
     }
-    @Override
-    public Categoria buscarPorId(Integer id) {
-        return super.buscarPorId(id);
-    }
-    @Override
-    public List<Categoria> listar() {
-        return super.listar();
+
+
+    private boolean isValid(Categoria entidade) {
+        if(entidade.getDescricao().isBlank()){
+            throw new IllegalArgumentException("Descrição Vazia");
+        }
+        if(getDao().existeDescricao(entidade.getDescricao())){
+            throw new IllegalArgumentException("Descrição Já Cadastrada");
+        }
+        return true;
     }
 
 }

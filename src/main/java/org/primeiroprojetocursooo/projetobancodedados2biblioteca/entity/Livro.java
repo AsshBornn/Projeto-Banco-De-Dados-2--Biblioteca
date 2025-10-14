@@ -28,7 +28,7 @@ public class Livro implements Serializable {
     private Categoria categoria;
 
     @ManyToMany(mappedBy = "livros", fetch = FetchType.EAGER)
-    private Set<Locacao> locacoes = new HashSet<>();
+    private Set<Locacao> locacoes;
 
     public Livro() {}
 

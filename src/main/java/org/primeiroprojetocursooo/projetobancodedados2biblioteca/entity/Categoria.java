@@ -3,7 +3,6 @@ package org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 @Entity
@@ -17,8 +16,8 @@ public class Categoria implements Serializable {
     private Integer id;
     @Column(unique = true)
     private String descricao;
-    @OneToMany(mappedBy = "categoria", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Livro> livros = new HashSet<>();
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.EAGER)
+    private Set<Livro> livros ;
 
     public Categoria() {}
 

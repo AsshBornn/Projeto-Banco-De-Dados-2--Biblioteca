@@ -1,6 +1,7 @@
 package org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Categoria;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Livro;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.LivroStatus;
@@ -42,5 +43,20 @@ public class LivroDAO extends GenericDAO<Livro> {
     @Override
     public void excluir(Integer id) {
         super.excluir(id);
+    }
+    //METODO VERIFICAR TITULO
+    public boolean existeTITULO(String titulo) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT l FROM Livro l WHERE LOWER(l.titulo)= LOWER(:titulo)";
+            TypedQuery<Livro> query = em.createQuery(jpql, Livro.class);
+            query.setParameter("titulo", titulo);
+            return !query.getResultList().isEmpty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro Ao Verificar");
+        } finally {
+            em.close();
+        }
     }
 }

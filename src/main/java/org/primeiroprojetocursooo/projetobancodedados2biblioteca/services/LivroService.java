@@ -3,24 +3,23 @@ import org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO.LivroDAO;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Livro;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.LivroStatus;
 
-import java.util.List;
-
-public class LivroService extends GenericService<Livro> {
-    private LivroDAO livroDAO;
+public class LivroService extends GenericService<Livro,LivroDAO> {
 
     public LivroService() {
         super(new LivroDAO(Livro.class));//Passa para o GenericService
-        this.livroDAO = (LivroDAO) super.getDao();//pega a mesma instancia para pode utilizar metodos especificos da classe LivroDAO sem criar outra instancia
     }
     @Override
-    public void salvar(Livro entidade) {//verifica se a entidade e o titulo não é nulo ou é apenas espaços vazios
-
-        entidade.setStatus(LivroStatus.DISPONIVEL);//MARCA O LIVRO COMO DISPONIVEL
-        super.salvar(entidade);
+    public void salvar(Livro entidade) {
+        if(isValid(entidade)){
+            entidade.setStatus(LivroStatus.DISPONIVEL);//MARCA O LIVRO COMO DISPONIVEL
+            super.salvar(entidade);
+        }
     }
     @Override
     public void atualizar(Livro entidade) {
-        super.atualizar(entidade);
+        if(isValid(entidade)){
+            super.atualizar(entidade);
+        }
     }
     @Override
     public void excluir(Integer id) {
@@ -30,8 +29,11 @@ public class LivroService extends GenericService<Livro> {
     public Livro buscarPorId(Integer id) {
         return super.buscarPorId(id);
     }
-    @Override
-    public List<Livro> listar() {
-        return super.listar();
+    private boolean isValid(Livro entidade){
+        if(getDao().existeTITULO(entidade.getTitulo())){
+            throw new IllegalArgumentException("Titulo ja existente");
+        }
+        return true;
     }
 }
+

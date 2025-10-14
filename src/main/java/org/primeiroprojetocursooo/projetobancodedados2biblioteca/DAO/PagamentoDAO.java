@@ -1,12 +1,5 @@
 package org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO;
-
-import jakarta.persistence.EntityManager;
-import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Locacao;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Pagamento;
-import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Usuario;
-import org.primeiroprojetocursooo.projetobancodedados2biblioteca.util.JPAUtil;
-
-import java.time.LocalDate;
 import java.util.List;
 
 public class PagamentoDAO extends GenericDAO<Pagamento> {

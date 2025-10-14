@@ -1,16 +1,12 @@
 package org.primeiroprojetocursooo.projetobancodedados2biblioteca.services;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO.UsuarioDAO;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Usuario;
-import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.LocacaoStatus;
 
 import java.util.List;
 
-public class UsuarioService extends GenericService<Usuario> {
-    private UsuarioDAO usuarioDAO;// DAO específico
-
+public class UsuarioService extends GenericService<Usuario,UsuarioDAO> {
     public UsuarioService() {
         super(new UsuarioDAO(Usuario.class)); // passa para GenericService
-        this.usuarioDAO = (UsuarioDAO) super.getDao(); // pega a mesma instância para não criar duas instancias do DAO
     }
     public void salvar(Usuario entidade) {
         super.salvar(entidade);
@@ -31,4 +27,8 @@ public class UsuarioService extends GenericService<Usuario> {
     public List<Usuario> listar() {
         return super.listar();
     }
+    public List<Usuario> buscarPorNome(String nome) {
+        return getDao().buscarPorNome(nome);
+    }
+
 }

@@ -1,13 +1,11 @@
 package org.primeiroprojetocursooo.projetobancodedados2biblioteca.services;
-
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO.GenericDAO;
-
 import java.util.List;
 
-public class GenericService<T> {
-    private GenericDAO<T> dao;
+public class GenericService<T,Y extends GenericDAO<T>> {
+    private Y dao;
 
-    public GenericService(GenericDAO<T> dao) {
+    public GenericService(Y dao) {
         this.dao = dao;
     }
 
@@ -17,7 +15,7 @@ public class GenericService<T> {
     public T buscarPorId(Integer id) { return dao.buscarPorId(id); }
     public List<T> listar() { return dao.listar(); }
 
-    public GenericDAO<T> getDao() {
+    public Y getDao() {
         return dao;// Utilizado para pegar o dao especifico e não gera outra instancias para utilizar metodos especificos da classe
     }
 }

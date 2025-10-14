@@ -45,7 +45,6 @@ public class GenericDAO <T>{
         try{
             Entity entityAnnotation=clazz.getAnnotation(Entity.class);// Dececta a anotação da classe @Entity
             // para não da erro na Hora de Procurar no bd
-
             // Pega o Nome Definido e poem em uma String se for diferente de null
             String entityName = entityAnnotation !=null? entityAnnotation.name():null;
             //Compara se é nullo ou vazio o entityName

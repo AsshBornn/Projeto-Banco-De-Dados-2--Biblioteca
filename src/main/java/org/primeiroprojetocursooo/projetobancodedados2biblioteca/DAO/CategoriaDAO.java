@@ -1,6 +1,8 @@
 package org.primeiroprojetocursooo.projetobancodedados2biblioteca.DAO;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Categoria;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.Usuario;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.util.JPAUtil;
@@ -39,4 +41,34 @@ public class CategoriaDAO extends GenericDAO<Categoria> {
         super.excluir(id);
     }
 
+    //METODO VERIFICAR DESCRIÇÂO
+    public boolean existeDescricao(String descricao) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try{
+            String jpql = "SELECT c FROM Categoria c WHERE LOWER(c.descricao)= LOWER(:descricao)";
+            TypedQuery<Categoria> query = em.createQuery(jpql, Categoria.class);
+            query.setParameter("descricao", descricao);
+            return !query.getResultList().isEmpty(); // se a lista não estiver vazia, a categoria existe
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Erro Ao Verificar");
+        }finally {
+            em.close();
+        }
+    }
+    //METODO BUSCAR POR DESCRIÇÂO
+    public List<Categoria> buscarPorDescricao(String descricao) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT c FROM Categoria c WHERE LOWER(c.descricao) LIKE LOWER(:descricao)";
+            TypedQuery<Categoria> query = em.createQuery(jpql, Categoria.class);
+            query.setParameter("descricao", "%" + descricao + "%");
+            return query.getResultList();
+        }catch (Exception e){
+            throw new RuntimeException("Erro Ao Procurar Por Descricao");
+        }
+        finally {
+            em.close();
+        }
+    }
 }

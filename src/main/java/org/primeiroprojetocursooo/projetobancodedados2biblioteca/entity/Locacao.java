@@ -32,7 +32,7 @@ public class Locacao implements Serializable {
             joinColumns = @JoinColumn(name = "locacao_id"),
             inverseJoinColumns = @JoinColumn(name = "livro_id")
     )
-    private Set<Livro> livros = new HashSet<>();
+    private Set<Livro> livros;
 
     @OneToOne(mappedBy = "locacao", cascade = CascadeType.ALL)
     private Pagamento pagamento;

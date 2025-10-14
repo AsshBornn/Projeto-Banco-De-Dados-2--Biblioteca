@@ -15,10 +15,11 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true)
     private String nome;
+    @Column(unique = true)
     private String email;
     private String senha;
+    @Column(unique = true)
     private String telefone;
     public Usuario() {}
 
@@ -29,8 +30,8 @@ public class Usuario implements Serializable {
         this.senha = senha;
         this.telefone = telefone;
     }
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<Locacao> locacoes = new HashSet<>();
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    private Set<Locacao> locacoes;
 
     public Integer getId() {
         return id;
