@@ -3,186 +3,259 @@ package org.primeiroprojetocursooo.projetobancodedados2biblioteca;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.*;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.*;
 import org.primeiroprojetocursooo.projetobancodedados2biblioteca.services.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+/**
+ * Classe principal do sistema de Biblioteca.
+ * <p>
+ * Contém menus para gerenciar categorias, livros, usuários, locações e pagamentos.
+ * Este Main funciona como uma aplicação console, utilizando Services para persistência via JPA.
+ * Boas práticas:
+ * - Uso de Service para manipular entidades (DAO encapsulado).
+ * - Scanner e loops de menu controlados.
+ * - Tratamento simples de exceções, especialmente datas e IDs inválidos.
+ */
 public class Main {
 
-    private static final Scanner sc = new Scanner(System.in);
-    private static final CategoriaService categoriaService = new CategoriaService();
-    private static final LivroService livroService = new LivroService();
-    private static final UsuarioService usuarioService = new UsuarioService();
-    private static final LocacaoService locacaoService = new LocacaoService();
-    private static final PagamentoService pagamentoService = new PagamentoService();
+    // Scanner compartilhado para toda a aplicação
+    private static final Scanner SCANNER = new Scanner(System.in);
+
+    // Serviços (cada Service encapsula operações CRUD e consultas)
+    private static final CategoriaService CATEGORIA_SERVICE = new CategoriaService();
+    private static final LivroService LIVRO_SERVICE = new LivroService();
+    private static final UsuarioService USUARIO_SERVICE = new UsuarioService();
+    private static final LocacaoService LOCACAO_SERVICE = new LocacaoService();
+    private static final PagamentoService PAGAMENTO_SERVICE = new PagamentoService();
 
     public static void main(String[] args) {
-        while(true) {
-            StringBuilder menu = new StringBuilder();
-            menu.append("\n==== MENU PRINCIPAL ====\n")
-                    .append("1 - Categoria\n")
-                    .append("2 - Livro\n")
-                    .append("3 - Usuário\n")
-                    .append("4 - Locação\n")
-                    .append("5 - Pagamento\n")
-                    .append("0 - Sair\n")
-                    .append("Escolha: ")
-                    .toString();
 
-            int opc = Integer.parseInt(sc.nextLine());
+        while (true) {
+            // Construção do menu principal
+            System.out.print("""
+                    ==== MENU PRINCIPAL ====
+                    1 - Categoria
+                    2 - Livro
+                    3 - Usuário
+                    4 - Locação
+                    5 - Pagamento
+                    0 - Sair
+                    Escolha: """);
 
-            switch(opc) {
+            int opcao;
+            try {
+                opcao = Integer.parseInt(SCANNER.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Opção inválida! Digite um número.");
+                continue;
+            }
+
+            switch (opcao) {
                 case 1 -> menuCategoria();
                 case 2 -> menuLivro();
                 case 3 -> menuUsuario();
                 case 4 -> menuLocacao();
                 case 5 -> menuPagamento();
-                case 0 -> { System.out.println("Saindo..."); return; }
+                case 0 -> {
+                    System.out.println("Saindo...");
+                    return;
+                }
                 default -> System.out.println("Opção inválida!");
             }
         }
     }
 
     // ================= MENU CATEGORIA =================
+
+    /**
+     * Menu para operações de Categoria.
+     */
     private static void menuCategoria() {
-        StringBuilder menuCategoria = new StringBuilder();
-        menuCategoria.append("\n==== MENU CATEGORIA ====\n")
-                .append("1 - Listar\n")
-                .append("2 - Cadastrar\n")
-                .append("3 - Atualizar\n")
-                .append("4 - Excluir\n")
-                .append("Escolha: ")
-                .toString();
+        System.out.print("""
+                ==== MENU CATEGORIA ====
+                1 - Listar
+                2 - Cadastrar
+                3 - Atualizar
+                4 - Excluir
+                5 - Buscar por descrição
+                Escolha: """);
 
-        int opc = Integer.parseInt(sc.nextLine());
+        int opcao = Integer.parseInt(SCANNER.nextLine());
 
-        switch(opc) {
+        switch (opcao) {
             case 1 -> listarCategorias();
             case 2 -> cadastrarCategoria();
             case 3 -> atualizarCategoria();
             case 4 -> excluirCategoria();
+            case 5 -> buscarCategoriaPorDescricao();
             default -> System.out.println("Opção inválida!");
         }
     }
 
     private static void listarCategorias() {
-        List<Categoria> categorias = categoriaService.listar();
+        List<Categoria> categorias = CATEGORIA_SERVICE.listar();
         System.out.println("\n--- Categorias ---");
         categorias.forEach(c -> System.out.println(c.getId() + " - " + c.getDescricao()));
     }
 
     private static void cadastrarCategoria() {
         System.out.print("Descrição: ");
-        String desc = sc.nextLine();
-        Categoria c = new Categoria();
-        c.setDescricao(desc);
-        categoriaService.salvar(c);
-        System.out.println("Categoria cadastrada!");
+        String descricao = SCANNER.nextLine();
+
+        Categoria categoria = new Categoria();
+        categoria.setDescricao(descricao);
+
+        CATEGORIA_SERVICE.salvar(categoria);
+        System.out.println("Categoria cadastrada com sucesso!");
     }
 
     private static void atualizarCategoria() {
         listarCategorias();
         System.out.print("ID da Categoria para atualizar: ");
-        int id = Integer.parseInt(sc.nextLine());
-        Categoria c = categoriaService.buscarPorId(id);
-        if(c == null) { System.out.println("Categoria não encontrada"); return; }
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        Categoria categoria = CATEGORIA_SERVICE.buscarPorId(id);
+        if (categoria == null) {
+            System.out.println("Categoria não encontrada!");
+            return;
+        }
+
         System.out.print("Nova descrição: ");
-        c.setDescricao(sc.nextLine());
-        categoriaService.atualizar(c);
-        System.out.println("Categoria atualizada!");
+        categoria.setDescricao(SCANNER.nextLine());
+
+        CATEGORIA_SERVICE.atualizar(categoria);
+        System.out.println("Categoria atualizada com sucesso!");
     }
 
     private static void excluirCategoria() {
         listarCategorias();
         System.out.print("ID da Categoria para excluir: ");
-        int id = Integer.parseInt(sc.nextLine());
-        categoriaService.excluir(id);
-        System.out.println("Categoria excluída!");
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        CATEGORIA_SERVICE.excluir(id);
+        System.out.println("Categoria excluída com sucesso!");
+    }
+
+    private static void buscarCategoriaPorDescricao() {
+        System.out.print("Digite a descrição: ");
+        String descricao = SCANNER.nextLine();
+
+        List<Categoria> categorias = CATEGORIA_SERVICE.buscarPorDescricao(descricao);
+        categorias.forEach(c -> System.out.println(c.getId() + " - " + c.getDescricao()));
     }
 
     // ================= MENU LIVRO =================
-    private static void menuLivro() {
-        System.out.print(new StringBuilder()
-                .append("\n==== MENU LIVRO ====\n")
-                .append("1 - Listar\n")
-                .append("2 - Cadastrar\n")
-                .append("3 - Atualizar\n")
-                .append("4 - Excluir\n")
-                .append("Escolha: ")
-                .toString());
-        int opc = Integer.parseInt(sc.nextLine());
 
-        switch(opc) {
+    private static void menuLivro() {
+        System.out.print("""
+                ==== MENU LIVRO ====
+                1 - Listar
+                2 - Cadastrar
+                3 - Atualizar
+                4 - Excluir
+                5 - Buscar por título
+                Escolha: """);
+
+        int opcao = Integer.parseInt(SCANNER.nextLine());
+
+        switch (opcao) {
             case 1 -> listarLivros();
             case 2 -> cadastrarLivro();
             case 3 -> atualizarLivro();
             case 4 -> excluirLivro();
+            case 5 -> buscarLivroPorTitulo();
             default -> System.out.println("Opção inválida!");
         }
     }
 
     private static void listarLivros() {
-        List<Livro> livros = livroService.listar();
+        List<Livro> livros = LIVRO_SERVICE.listar();
         System.out.println("\n--- Livros ---");
         livros.forEach(l -> System.out.println(l.getId() + " - " + l.getTitulo() + " [" + l.getStatus() + "]"));
     }
 
     private static void cadastrarLivro() {
         System.out.print("Título: ");
-        String titulo = sc.nextLine();
-        System.out.print("Valor Por Dia: ");
-        double preco = Double.parseDouble(sc.nextLine());
+        String titulo = SCANNER.nextLine();
+
+        System.out.print("Valor por dia: ");
+        double preco = Double.parseDouble(SCANNER.nextLine());
+
         listarCategorias();
         System.out.print("ID da Categoria: ");
-        int idCat = Integer.parseInt(sc.nextLine());
-        Categoria cat = categoriaService.buscarPorId(idCat);
-        Livro l = new Livro();
-        l.setTitulo(titulo);
-        l.setCategoria(cat);
-        l.setStatus(LivroStatus.DISPONIVEL);
-        l.setPreco(preco);
-        livroService.salvar(l);
-        System.out.println("Livro cadastrado!");
+        int idCategoria = Integer.parseInt(SCANNER.nextLine());
+
+        Categoria categoria = CATEGORIA_SERVICE.buscarPorId(idCategoria);
+
+        Livro livro = new Livro();
+        livro.setTitulo(titulo);
+        livro.setCategoria(categoria); // Relacionamento ManyToOne
+        livro.setStatus(LivroStatus.DISPONIVEL); // Enum de status
+        livro.setPreco(preco);
+
+        LIVRO_SERVICE.salvar(livro);
+        System.out.println("Livro cadastrado com sucesso!");
     }
 
     private static void atualizarLivro() {
         listarLivros();
         System.out.print("ID do Livro: ");
-        int id = Integer.parseInt(sc.nextLine());
-        Livro l = livroService.buscarPorId(id);
-        if(l == null) { System.out.println("Livro não encontrado"); return; }
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        Livro livro = LIVRO_SERVICE.buscarPorId(id);
+        if (livro == null) {
+            System.out.println("Livro não encontrado!");
+            return;
+        }
+
         System.out.print("Novo título: ");
-        l.setTitulo(sc.nextLine());
+        livro.setTitulo(SCANNER.nextLine());
+
         listarCategorias();
         System.out.print("Nova Categoria ID: ");
-        int idCat = Integer.parseInt(sc.nextLine());
-        l.setCategoria(categoriaService.buscarPorId(idCat));
-        livroService.atualizar(l);
-        System.out.println("Livro atualizado!");
+        int idCategoria = Integer.parseInt(SCANNER.nextLine());
+
+        livro.setCategoria(CATEGORIA_SERVICE.buscarPorId(idCategoria));
+        LIVRO_SERVICE.atualizar(livro);
+
+        System.out.println("Livro atualizado com sucesso!");
     }
 
     private static void excluirLivro() {
         listarLivros();
         System.out.print("ID do Livro: ");
-        int id = Integer.parseInt(sc.nextLine());
-        livroService.excluir(id);
-        System.out.println("Livro excluído!");
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        LIVRO_SERVICE.excluir(id);
+        System.out.println("Livro excluído com sucesso!");
+    }
+
+    private static void buscarLivroPorTitulo() {
+        System.out.print("Digite o título: ");
+        String titulo = SCANNER.nextLine();
+
+        List<Livro> livros = LIVRO_SERVICE.buscarPorTitulo(titulo);
+        livros.forEach(l -> System.out.println(l.getId() + " - " + l.getTitulo() + " [" + l.getStatus() + "]"));
     }
 
     // ================= MENU USUÁRIO =================
-    private static void menuUsuario() {
-        System.out.print(new StringBuilder()
-                .append("\n==== MENU USUÁRIO ====\n")
-                .append("1 - Listar\n")
-                .append("2 - Cadastrar\n")
-                .append("3 - Atualizar\n")
-                .append("4 - Excluir\n")
-                .append("Escolha: ")
-                .toString());
-        int opc = Integer.parseInt(sc.nextLine());
 
-        switch(opc) {
+    private static void menuUsuario() {
+        System.out.print("""
+                ==== MENU USUÁRIO ====
+                1 - Listar
+                2 - Cadastrar
+                3 - Atualizar
+                4 - Excluir
+                Escolha: """);
+
+        int opcao = Integer.parseInt(SCANNER.nextLine());
+
+        switch (opcao) {
             case 1 -> listarUsuarios();
             case 2 -> cadastrarUsuario();
             case 3 -> atualizarUsuario();
@@ -192,221 +265,376 @@ public class Main {
     }
 
     private static void listarUsuarios() {
-        List<Usuario> usuarios = usuarioService.listar();
+        List<Usuario> usuarios = USUARIO_SERVICE.listar();
         System.out.println("\n--- Usuários ---");
         usuarios.forEach(u -> System.out.println(u.getId() + " - " + u.getNome() + " (" + u.getEmail() + ")"));
     }
 
     private static void cadastrarUsuario() {
         System.out.print("Nome: ");
-        String nome = sc.nextLine();
+        String nome = SCANNER.nextLine();
+
         System.out.print("E-mail: ");
-        String email = sc.nextLine();
-        Usuario u = new Usuario();
-        u.setNome(nome);
-        u.setEmail(email);
-        usuarioService.salvar(u);
-        System.out.println("Usuário cadastrado!");
+        String email = SCANNER.nextLine();
+
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+
+        USUARIO_SERVICE.salvar(usuario);
+        System.out.println("Usuário cadastrado com sucesso!");
     }
 
     private static void atualizarUsuario() {
         listarUsuarios();
         System.out.print("ID do Usuário: ");
-        int id = Integer.parseInt(sc.nextLine());
-        Usuario u = usuarioService.buscarPorId(id);
-        if(u == null) { System.out.println("Usuário não encontrado"); return; }
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        Usuario usuario = USUARIO_SERVICE.buscarPorId(id);
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado!");
+            return;
+        }
+
         System.out.print("Novo nome: ");
-        u.setNome(sc.nextLine());
+        usuario.setNome(SCANNER.nextLine());
+
         System.out.print("Novo e-mail: ");
-        u.setEmail(sc.nextLine());
-        usuarioService.atualizar(u);
-        System.out.println("Usuário atualizado!");
+        usuario.setEmail(SCANNER.nextLine());
+
+        USUARIO_SERVICE.atualizar(usuario);
+        System.out.println("Usuário atualizado com sucesso!");
     }
 
     private static void excluirUsuario() {
         listarUsuarios();
         System.out.print("ID do Usuário: ");
-        int id = Integer.parseInt(sc.nextLine());
-        usuarioService.excluir(id);
-        System.out.println("Usuário excluído!");
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        USUARIO_SERVICE.excluir(id);
+        System.out.println("Usuário excluído com sucesso!");
     }
 
     // ================= MENU LOCAÇÃO =================
-    private static void menuLocacao() {
-        System.out.print(new StringBuilder()
-                .append("\n==== MENU LOCAÇÃO ====\n")
-                .append("1 - Listar\n")
-                .append("2 - Cadastrar\n")
-                .append("3 - Atualizar (finalizar)\n")
-                .append("4 - Excluir\n")
-                .append("Escolha: ")
-                .toString());
-        int opc = Integer.parseInt(sc.nextLine());
 
-        switch(opc) {
+    /**
+     * Menu para operações de Locação.
+     */
+    private static void menuLocacao() {
+        System.out.print("""
+                ==== MENU LOCAÇÃO ====
+                1 - Listar
+                2 - Cadastrar
+                3 - Finalizar Locação
+                4 - Excluir
+                5 - Buscar por status
+                6 - Buscar por período
+                Escolha: """);
+
+        int opcao = Integer.parseInt(SCANNER.nextLine());
+
+        switch (opcao) {
             case 1 -> listarLocacoes();
             case 2 -> cadastrarLocacao();
             case 3 -> finalizarLocacao();
             case 4 -> excluirLocacao();
+            case 5 -> buscarLocacoesPorStatus();
+            case 6 -> buscarLocacoesPorPeriodo();
             default -> System.out.println("Opção inválida!");
         }
     }
 
+    /**
+     * Lista todas as locações e seus livros.
+     */
     private static void listarLocacoes() {
-        List<Locacao> locacoes = locacaoService.listar();
+        List<Locacao> locacoes = LOCACAO_SERVICE.listar();
         System.out.println("\n--- Locações ---");
-        locacoes.forEach(l -> {
-            String livros = l.getLivros().stream().map(Livro::getTitulo).reduce((a,b)->a+", "+b).orElse("");
-            String usuario = l.getUsuario() != null ? l.getUsuario().getNome() : "N/D";
-            System.out.println(l.getId() + " - " + usuario + " - " + livros + " [" + l.getStatus() + "]");
+
+        locacoes.forEach(locacao -> {
+            String livros = locacao.getLivros().stream()
+                    .map(Livro::getTitulo)
+                    .collect(Collectors.joining(", "));
+
+            String usuario = locacao.getUsuario() != null ? locacao.getUsuario().getNome() : "N/D";
+            String dataLocacao = locacao.getDataLocacao() != null ? locacao.getDataLocacao().toString() : "N/D";
+            String dataDevolucao = locacao.getDataDevolucao() != null ? locacao.getDataDevolucao().toString() : "N/D";
+
+            System.out.println(locacao.getId() + " - " + usuario + " - " + livros +
+                    " [" + locacao.getStatus() + "] - Locação: " + dataLocacao +
+                    " - Devolução: " + dataDevolucao);
         });
     }
 
+    /**
+     * Cadastra uma locação associando livros e usuário.
+     */
     private static void cadastrarLocacao() {
         listarUsuarios();
         System.out.print("ID do Usuário: ");
-        int idUsuario = Integer.parseInt(sc.nextLine());
-        Usuario u = usuarioService.buscarPorId(idUsuario);
-        if (u == null) {
-            System.out.println("Usuário não encontrado");
+        int idUsuario = Integer.parseInt(SCANNER.nextLine());
+
+        Usuario usuario = USUARIO_SERVICE.buscarPorId(idUsuario);
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado!");
             return;
         }
+
         listarLivros();
         System.out.print("IDs dos livros (separados por vírgula): ");
-        String[] ids = sc.nextLine().split(",");
+        String[] ids = SCANNER.nextLine().split(",");
 
-        Locacao loc = new Locacao();
-        loc.setUsuario(u);
-        loc.setStatus(LocacaoStatus.LOCADA);
+        Locacao locacao = new Locacao();
+        locacao.setUsuario(usuario);
+        locacao.setStatus(LocacaoStatus.LOCADA);
 
         for (String s : ids) {
             int livroId = Integer.parseInt(s.trim());
-            Livro l = livroService.buscarPorId(livroId);
-            if (l != null) {
-                loc.getLivros().add(l);
-                l.setStatus(LivroStatus.LOCADO); // atualiza o status do livro
+            Livro livro = LIVRO_SERVICE.buscarPorId(livroId);
+            if (livro != null) {
+                locacao.getLivros().add(livro);
+                livro.setStatus(LivroStatus.LOCADO); // atualiza o status do livro
             } else {
                 System.out.println("Livro com ID " + livroId + " não encontrado!");
             }
         }
+
+        // Captura a data de devolução com validação
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dataDevolucao = null;
         while (dataDevolucao == null) {
-            System.out.println("Digite a Data de Devolução (dd/MM/yyyy): ");
-            String dataInput = sc.nextLine();
+            System.out.print("Digite a Data de Devolução (dd/MM/yyyy): ");
             try {
-                dataDevolucao = LocalDate.parse(dataInput, formatter);
+                dataDevolucao = LocalDate.parse(SCANNER.nextLine(), formatter);
             } catch (Exception e) {
                 System.out.println("Data inválida! Digite no formato dd/MM/yyyy.");
             }
         }
-        loc.setDataDevolucao(dataDevolucao);
-        loc.setDataLocacao(LocalDate.now());
-        locacaoService.salvar(loc);
+
+        locacao.setDataLocacao(LocalDate.now());
+        locacao.setDataDevolucao(dataDevolucao);
+
+        LOCACAO_SERVICE.salvar(locacao);
         System.out.println("Locação cadastrada com sucesso!");
     }
 
-
+    /**
+     * Finaliza a locação alterando a data de devolução para hoje.
+     */
     private static void finalizarLocacao() {
         listarLocacoes();
         System.out.print("ID da Locação para finalizar: ");
-        int id = Integer.parseInt(sc.nextLine());
-        Locacao loc = locacaoService.buscarPorId(id);
-        if(loc == null){ System.out.println("Locação não encontrada"); return; }
-        loc.setDataDevolucao(LocalDate.now());
-        locacaoService.atualizar(loc);
-        System.out.println("Locação finalizada!");
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        Locacao locacao = LOCACAO_SERVICE.buscarPorId(id);
+        if (locacao == null) {
+            System.out.println("Locação não encontrada!");
+            return;
+        }
+
+        locacao.setDataDevolucao(LocalDate.now());
+        LOCACAO_SERVICE.atualizar(locacao);
+        System.out.println("Locação finalizada com sucesso!");
     }
 
     private static void excluirLocacao() {
         listarLocacoes();
         System.out.print("ID da Locação para excluir: ");
-        int id = Integer.parseInt(sc.nextLine());
-        locacaoService.excluir(id);
-        System.out.println("Locação excluída!");
+        int id = Integer.parseInt(SCANNER.nextLine());
+
+        LOCACAO_SERVICE.excluir(id);
+        System.out.println("Locação excluída com sucesso!");
+    }
+
+    private static void buscarLocacoesPorStatus() {
+        System.out.println("""
+                Digite:
+                1 - Locadas
+                2 - Finalizadas
+                3 - Atrasadas""");
+
+        int opcao = Integer.parseInt(SCANNER.nextLine());
+        List<Locacao> locacoes;
+
+        switch (opcao) {
+            case 1 -> locacoes = LOCACAO_SERVICE.buscarLocacoes(LocacaoStatus.LOCADA);
+            case 2 -> locacoes = LOCACAO_SERVICE.buscarLocacoes(LocacaoStatus.FINALIZADA);
+            case 3 -> locacoes = LOCACAO_SERVICE.buscarLocacoes(LocacaoStatus.ATRASADA);
+            default -> {
+                System.out.println("Opção inválida!");
+                return;
+            }
+        }
+
+        locacoes.forEach(locacao -> {
+            String livros = locacao.getLivros().stream()
+                    .map(Livro::getTitulo)
+                    .collect(Collectors.joining(", "));
+            String usuario = locacao.getUsuario() != null ? locacao.getUsuario().getNome() : "N/D";
+            String dataLocacao = locacao.getDataLocacao() != null ? locacao.getDataLocacao().toString() : "N/D";
+            String dataDevolucao = locacao.getDataDevolucao() != null ? locacao.getDataDevolucao().toString() : "N/D";
+
+            System.out.println(locacao.getId() + " - " + usuario + " - " + livros +
+                    " [" + locacao.getStatus() + "] - Locação: " + dataLocacao +
+                    " - Devolução: " + dataDevolucao);
+        });
+    }
+
+    private static void buscarLocacoesPorPeriodo() {
+        System.out.print("Digite a data de início (dd/MM/yyyy): ");
+        LocalDate dataInicio = LocalDate.parse(SCANNER.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        System.out.print("Digite a data de fim (dd/MM/yyyy): ");
+        LocalDate dataFim = LocalDate.parse(SCANNER.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        List<Locacao> locacoes = LOCACAO_SERVICE.buscarLocacaoPorPeriodo(dataInicio, dataFim);
+
+        locacoes.forEach(locacao -> {
+            String livros = locacao.getLivros().stream()
+                    .map(Livro::getTitulo)
+                    .collect(Collectors.joining(", "));
+            String usuario = locacao.getUsuario() != null ? locacao.getUsuario().getNome() : "N/D";
+            String dataLocacao = locacao.getDataLocacao() != null ? locacao.getDataLocacao().toString() : "N/D";
+            String dataDevolucao = locacao.getDataDevolucao() != null ? locacao.getDataDevolucao().toString() : "N/D";
+
+            System.out.println(locacao.getId() + " - " + usuario + " - " + livros +
+                    " [" + locacao.getStatus() + "] - Locação: " + dataLocacao +
+                    " - Devolução: " + dataDevolucao);
+        });
     }
 
     // ================= MENU PAGAMENTO =================
-    private static void menuPagamento() {
-        System.out.print(new StringBuilder()
-                .append("\n==== MENU PAGAMENTO ====\n")
-                .append("1 - Listar\n")
-                .append("2 - Cadastrar\n")
-                .append("3 - Atualizar\n")
-                .append("Escolha: ")
-                .toString());
-        int opc = Integer.parseInt(sc.nextLine());
 
-        switch(opc) {
+    private static void menuPagamento() {
+        System.out.print("""
+                ==== MENU PAGAMENTO ====
+                1 - Listar
+                2 - Cadastrar
+                3 - Atualizar
+                4 - Buscar por período
+                5 - Buscar por usuário
+                Escolha: """);
+
+        int opcao = Integer.parseInt(SCANNER.nextLine());
+
+        switch (opcao) {
             case 1 -> listarPagamentos();
             case 2 -> cadastrarPagamento();
             case 3 -> atualizarPagamento();
+            case 4 -> buscarPagamentoPorPeriodo();
+            case 5 -> buscarPagamentoPorUsuario();
             default -> System.out.println("Opção inválida!");
         }
     }
 
     private static void listarPagamentos() {
-        List<Pagamento> pagamentos = pagamentoService.listar();
+        List<Pagamento> pagamentos = PAGAMENTO_SERVICE.listar();
         System.out.println("\n--- Pagamentos ---");
         pagamentos.forEach(p -> {
             String usuario = p.getLocacao().getUsuario() != null ? p.getLocacao().getUsuario().getNome() : "N/D";
-            System.out.println(p.getId() + " - Usuário: " + usuario + " - Valor: " + p.getValor() + " - Data: " + p.getDataPagamento());
+            System.out.println(p.getId() + " - Usuário: " + usuario +
+                    " - Valor: " + p.getValor() +
+                    " - Data: " + p.getDataPagamento());
         });
     }
 
     private static void cadastrarPagamento() {
-        // Listar locações pendentes
-        List<Locacao> pendentes = locacaoService.listar();
         System.out.println("Locações pendentes de pagamento:");
-        pendentes.forEach(l ->
-                System.out.println(l.getId() + " - " + l.getUsuario().getNome() + " - Livros: " + l.getLivros())
+        LOCACAO_SERVICE.listar().forEach(l ->
+                System.out.println(l.getId() + " - " + l.getUsuario().getNome() +
+                        " - Livros: " + l.getLivros().stream()
+                        .map(Livro::getTitulo)
+                        .collect(Collectors.joining(", ")))
         );
 
-        // Escolher a locação
         System.out.print("ID da Locação: ");
-        int idLoc = Integer.parseInt(sc.nextLine());
-        Locacao loc = locacaoService.buscarPorId(idLoc);
+        int idLocacao = Integer.parseInt(SCANNER.nextLine());
+        Locacao locacao = LOCACAO_SERVICE.buscarPorId(idLocacao);
 
-        if (loc == null) {
-            System.out.println("Locação não encontrada");
+        if (locacao == null) {
+            System.out.println("Locação não encontrada!");
             return;
         }
 
-        // Criar e salvar pagamento
-        Pagamento p = new Pagamento();
-        p.setLocacao(loc);
-        p.setDataPagamento(LocalDate.now());
-        pagamentoService.salvar(p);
-        loc.setStatus(LocacaoStatus.FINALIZADA);
+        Pagamento pagamento = new Pagamento();
+        pagamento.setLocacao(locacao);
+        pagamento.setDataPagamento(LocalDate.now());
 
-        // Mostrar valor imediatamente
-        System.out.println("Pagamento registrado!");
-        System.out.println("Valor do pagamento: R$ " + p.getValor());
+        PAGAMENTO_SERVICE.salvar(pagamento);
+
+        locacao.setStatus(LocacaoStatus.FINALIZADA); // Marca locação como finalizada
+        LOCACAO_SERVICE.atualizar(locacao);
+
+        System.out.println("Pagamento registrado com sucesso!");
+        System.out.println("Valor do pagamento: R$ " + pagamento.getValor());
     }
 
-
     private static void atualizarPagamento() {
-        listarPagamentos(); // lista todos os pagamentos
+        listarPagamentos();
         System.out.print("ID do Pagamento: ");
-        int id = Integer.parseInt(sc.nextLine());
+        int id = Integer.parseInt(SCANNER.nextLine());
 
-        Pagamento p = pagamentoService.buscarPorId(id);
-        if (p == null) {
-            System.out.println("Pagamento não encontrado");
+        Pagamento pagamento = PAGAMENTO_SERVICE.buscarPorId(id);
+        if (pagamento == null) {
+            System.out.println("Pagamento não encontrado!");
             return;
         }
 
         System.out.print("Nova data de pagamento (dd/MM/yyyy): ");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate novaData;
         try {
-            novaData = LocalDate.parse(sc.nextLine(), formatter);
+            novaData = LocalDate.parse(SCANNER.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         } catch (Exception e) {
-            System.out.println("Formato de data inválido");
+            System.out.println("Formato de data inválido!");
             return;
         }
-        p.setDataPagamento(novaData);
-        pagamentoService.atualizar(p);
+
+        pagamento.setDataPagamento(novaData);
+        PAGAMENTO_SERVICE.atualizar(pagamento);
         System.out.println("Data do pagamento atualizada com sucesso!");
+    }
+
+    private static void buscarPagamentoPorPeriodo() {
+        System.out.print("Digite a data de início (dd/MM/yyyy): ");
+        LocalDate dataInicio = LocalDate.parse(SCANNER.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        System.out.print("Digite a data de fim (dd/MM/yyyy): ");
+        LocalDate dataFim = LocalDate.parse(SCANNER.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        List<Pagamento> pagamentos = PAGAMENTO_SERVICE.buscarPorPeriodo(dataInicio, dataFim);
+
+        pagamentos.forEach(p -> {
+            String usuario = p.getLocacao().getUsuario() != null ? p.getLocacao().getUsuario().getNome() : "N/D";
+            String livros = p.getLocacao().getLivros().stream()
+                    .map(Livro::getTitulo)
+                    .collect(Collectors.joining(", "));
+            System.out.println(p.getId() + " - " + usuario +
+                    " - Livros: " + livros +
+                    " - Valor: " + p.getValor() +
+                    " - Data Pagamento: " + (p.getDataPagamento() != null ? p.getDataPagamento() : "N/D"));
+        });
+    }
+
+    private static void buscarPagamentoPorUsuario() {
+        System.out.print("Digite o ID do usuário: ");
+        int idUsuario = Integer.parseInt(SCANNER.nextLine());
+        Usuario usuario = USUARIO_SERVICE.buscarPorId(idUsuario);
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado!");
+            return;
+        }
+
+        List<Pagamento> pagamentos = PAGAMENTO_SERVICE.buscarPagamentosPorUsuario(usuario);
+
+        pagamentos.forEach(p -> {
+            String livros = p.getLocacao().getLivros().stream()
+                    .map(Livro::getTitulo)
+                    .collect(Collectors.joining(", "));
+            System.out.println(p.getId() + " - " + usuario.getNome() +
+                    " - Livros: " + livros +
+                    " - Valor: " + p.getValor() +
+                    " - Data Pagamento: " + (p.getDataPagamento() != null ? p.getDataPagamento() : "N/D"));
+        });
     }
 }
