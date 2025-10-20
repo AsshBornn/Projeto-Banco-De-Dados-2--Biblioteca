@@ -9,6 +9,8 @@ import java.util.Objects;
  * Entidade Pagamento representando o pagamento de uma locação de livros.
  * Cada pagamento está associado a uma única locação (One-to-One).
  *
+ * Novidade: agora o valor total da locação é persistido no banco.
+ *
  * Implementa Serializable para persistência e transmissão de objetos.
  */
 @Entity
@@ -16,6 +18,10 @@ import java.util.Objects;
 public class Pagamento implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    // ===========================
+    // Atributos
+    // ===========================
 
     /**
      * Identificador único do pagamento.
@@ -35,10 +41,19 @@ public class Pagamento implements Serializable {
      * Relação One-to-One:
      * - Cada pagamento pertence a uma única locação.
      * - O atributo "locacao_id" na tabela tb_pagamento referencia a locação correspondente.
+     *
+     * Ao definir a locação, o valor é calculado automaticamente.
      */
     @OneToOne
-    @JoinColumn(name = "locacao_id")
+    @JoinColumn(name = "locacao_id", unique = true)
     private Locacao locacao;
+
+    /**
+     * Valor total do pagamento.
+     * Persistido no banco para permitir consultas SQL diretas.
+     */
+    @Column(nullable = false)
+    private Double valor = 0.0;
 
     // ===========================
     // Construtores
@@ -60,7 +75,7 @@ public class Pagamento implements Serializable {
     public Pagamento(Integer id, LocalDate dataPagamento, Locacao locacao) {
         this.id = id;
         this.dataPagamento = dataPagamento;
-        this.locacao = locacao;
+        this.setLocacao(locacao); // calcula valor automaticamente
     }
 
     // ===========================
@@ -87,37 +102,33 @@ public class Pagamento implements Serializable {
         return locacao;
     }
 
+    /**
+     * Define a locação associada a este pagamento.
+     * Ao associar, o valor total é calculado automaticamente.
+     *
+     * @param locacao Locação vinculada
+     */
     public void setLocacao(Locacao locacao) {
         this.locacao = locacao;
+        if (locacao != null) {
+            this.valor = locacao.getValorTotal();
+        } else {
+            this.valor = 0.0;
+        }
     }
 
-    // ===========================
-    // Métodos auxiliares
-    // ===========================
-
-    /**
-     * Retorna o valor total do pagamento, baseado no valor total da locação associada.
-     * Se não houver locação vinculada, retorna 0.0.
-     *
-     * Boa prática:
-     * - Evita NullPointerException verificando se locacao é null.
-     * - Reutiliza lógica centralizada em Locacao.getValorTotal().
-     *
-     * @return Valor total a ser pago
-     */
     public Double getValor() {
-        if (locacao == null) return 0.0;
-        return locacao.getValorTotal();
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
     }
 
     // ===========================
     // equals e hashCode
     // ===========================
 
-    /**
-     * Compara pagamentos pelo identificador único.
-     * Essencial para consistência em coleções (Set, Map) e para o JPA.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,9 +137,6 @@ public class Pagamento implements Serializable {
         return Objects.equals(id, pagamento.id);
     }
 
-    /**
-     * Retorna hashCode baseado no id do pagamento.
-     */
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
