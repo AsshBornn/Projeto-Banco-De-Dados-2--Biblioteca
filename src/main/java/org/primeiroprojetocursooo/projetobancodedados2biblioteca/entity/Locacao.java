@@ -5,6 +5,7 @@ import org.primeiroprojetocursooo.projetobancodedados2biblioteca.entity.enums.Lo
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -63,13 +64,13 @@ public class Locacao implements Serializable {
      * Cascade MERGE e PERSIST permitem salvar/atualizar livros automaticamente.
      * FetchType.EAGER garante que livros sejam carregados junto com a locação.
      */
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "tb_locacao_livro",
             joinColumns = @JoinColumn(name = "locacao_id"),
             inverseJoinColumns = @JoinColumn(name = "livro_id")
     )
-    private Set<Livro> livros;
+    private Set<Livro> livros = new HashSet<>();//HashSet inicialização no construtor: evitar NullPoint quando chamar GetLivros
 
     /**
      * Pagamento associado a esta locação.

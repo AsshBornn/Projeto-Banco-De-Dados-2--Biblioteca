@@ -42,6 +42,7 @@ public class Livro implements Serializable {
      * Mapear enums como String no banco facilita leitura e manutenção.
      */
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR") // indica que é o tipo enum do PostgreSQL
     private LivroStatus status;
 
     /**
