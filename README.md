@@ -1,9 +1,3 @@
-Perfeito! Este arquivo Main.java era a peça que faltava. Ele é a "interface do usuário" (UI) do seu projeto e mostra exatamente como você orquestra os serviços para executar as regras de negócio.
-
-Eu atualizei o README que tinha gerado, substituindo meu "exemplo" de Main pelo seu Main real na seção "Como Executar" e adicionei uma nova seção (seção 6) que descreve os fluxos de negócio que seu menu executa (como o processo de locação e pagamento).
-
-Aqui está o README final e completo do seu projeto.
-
 🚀 README: Projeto de Sistema de Biblioteca (Java + JPA Clássico)
 Este documento descreve a arquitetura, os objetivos e os principais insights do projeto de sistema de gerenciamento de biblioteca, desenvolvido em Java com foco em persistência de dados usando JPA (Jakarta Persistence API) e uma arquitetura em camadas.
 
