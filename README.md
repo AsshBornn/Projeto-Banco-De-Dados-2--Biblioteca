@@ -64,6 +64,7 @@ erDiagram
         decimal valor
         date dataPagamento
     }
+```
 
 ## 💡 Insights Arquiteturais
 
