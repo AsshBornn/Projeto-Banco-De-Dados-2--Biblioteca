@@ -31,30 +31,39 @@ O sistema é formado por cinco entidades principais:
 
 ### 🔗 Diagrama (Simplificado)
 
-+-----------+ 1..* 1 +-----------+
-| Usuario |----------->| Locacao |
-+-----------+ +-----------+
-| ^
-| | 1..1
-| |
-+-----------+ 1..* 1 | |
-| Categoria |----------->| Livro |
-+-----------+ +-----------+
-| ^
-| | 1..*
-| |
-1..*| | 1
-+-----------+ 1..1 | |
-| Pagamento |<-------------+ |
-+-----------+ |
-|
-+ (tb_locacao_livro)
-
-yaml
-Copiar código
-
----
-
+```mermaid
+erDiagram
+    USUARIO ||--o{ LOCACAO : "realiza"
+    CATEGORIA ||--o{ LIVRO : "contém"
+    LIVRO }o--o{ LOCACAO : "é locado em"
+    LOCACAO ||--|| PAGAMENTO : "possui"
+    
+    USUARIO {
+      int id
+      string nome
+      string email
+    }
+    CATEGORIA {
+      int id
+      string nome
+    }
+    LIVRO {
+      int id
+      string titulo
+      decimal preco
+      string status
+    }
+    LOCACAO {
+      int id
+      date dataInicio
+      date dataFim
+      string status
+    }
+    PAGAMENTO {
+      int id
+      decimal valor
+      date dataPagamento
+    }
 ## 💡 Insights Arquiteturais
 
 ### 🔹 1. Arquitetura em Camadas
