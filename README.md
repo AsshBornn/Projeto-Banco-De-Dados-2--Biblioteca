@@ -140,7 +140,7 @@ Configuração padrão (persistence.xml):
 makefile
 Copiar código
 Usuário: postgres
-Senha: 549276183
+Senha: "Senha"
 ⚠️ Atenção: por segurança, altere essa senha antes de publicar o projeto.
 
 🏗️ Build do Projeto
