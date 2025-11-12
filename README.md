@@ -39,31 +39,32 @@ erDiagram
     LOCACAO ||--|| PAGAMENTO : "possui"
     
     USUARIO {
-      int id
-      string nome
-      string email
+        int id
+        string nome
+        string email
     }
     CATEGORIA {
-      int id
-      string nome
+        int id
+        string nome
     }
     LIVRO {
-      int id
-      string titulo
-      decimal preco
-      string status
+        int id
+        string titulo
+        decimal preco
+        string status
     }
     LOCACAO {
-      int id
-      date dataInicio
-      date dataFim
-      string status
+        int id
+        date dataInicio
+        date dataFim
+        string status
     }
     PAGAMENTO {
-      int id
-      decimal valor
-      date dataPagamento
+        int id
+        decimal valor
+        date dataPagamento
     }
+
 ## 💡 Insights Arquiteturais
 
 ### 🔹 1. Arquitetura em Camadas
